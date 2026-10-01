@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Algorithm Visualizer</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0f172a;
+  color: white;
+}
+
+header {
+  text-align: center;
+  padding: 30px 15px;
+  background: #111827;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 30px;
+}
+
+header p {
+  color: #94a3b8;
+  margin-top: 10px;
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+button {
+  border: none;
+  padding: 12px 18px;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+button.secondary {
+  background: #475569;
+}
+
+.panel {
+  background: #1e293b;
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+#bars {
+  height: 330px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 5px;
+  padding: 20px 5px;
+}
+
+.bar {
+  width: 30px;
+  background: #38bdf8;
+  border-radius: 5px 5px 0 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  color: #082f49;
+  font-weight: bold;
+  font-size: 12px;
+  padding-bottom: 4px;
+}
+
+.bar.active {
+  background: #facc15;
+}
+
+.bar.sorted {
+  background: #22c55e;
+}
+
+.info {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: #cbd5e1;
+}
+
+#message {
+  text-align: center;
+  margin-top: 15px;
+  color: #facc15;
+  font-weight: bold;
+}
+
+.graph {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 220px;
+}
+
+.node {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: #475569;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  position: relative;
+}
+
+.node.visited {
+  background: #22c55e;
+}
+
+.graph-area {
+  display: grid;
+  grid-template-columns: repeat(3, 70px);
+  grid-template-rows: repeat(3, 70px);
+  gap: 25px;
+  justify-content: center;
+  align-items: center;
+}
+
+.search-array {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 25px 0;
+}
+
+.search-item {
+  width: 50px;
+  height: 50px;
+  background: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.search-item.active {
+  background: #facc15;
+  color: #111827;
+}
+
+.search-item.found {
+  background: #22c55e;
+}
+
+input {
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  width: 120px;
+  font-size: 16px;
+}
+
+.hidden {
+  display: none;
+}
+
+footer {
+  text-align: center;
+  padding: 25px;
+  color: #64748b;
+}
+
+@media(max-width:600px) {
+  header h1 {
+    font-size: 24px;
+  }
+
+  .bar {
+    width: 20px;
+    font-size: 9px;
+  }
+
+  #bars {
+    height: 270px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🧠 DSA Algorithm Visualizer</h1>
+  <p>Learn algorithms by watching them work</p>
+</header>
+
+<div class="container">
+
+  <div class="buttons">
+    <button onclick="showSort()">Sorting</button>
+    <button onclick="showSearch()">Binary Search</button>
+    <button onclick="showGraph()">BFS / DFS</button>
+  </div>
+
+  <!-- SORTING -->
+  <div id="sortPanel" class="panel">
+
+    <h2>📊 Sorting Visualizer</h2>
+
+    <div class="buttons">
+      <button onclick="bubbleSort()">Bubble Sort</button>
+      <button onclick="selectionSort()">Selection Sort</button>
+      <button class="secondary" onclick="generateArray()">Random Array</button>
+    </div>
+
+    <div id="bars"></div>
+
+    <div class="info">
+      <span>Algorithm: <b id="algorithm">None</b></span>
+      <span>Comparisons: <b id="comparisons">0</b></span>
+      <span>Swaps: <b id="swaps">0</b></span>
+    </div>
+
+    <div id="message">Choose an algorithm to start.</div>
+
+  </div>
+
+  <!-- SEARCH -->
+  <div id="searchPanel" class="panel hidden">
+
+    <h2>🔎 Binary Search</h2>
+
+    <p>
+      Binary Search works on a sorted array and repeatedly divides
+      the search area in half.
+    </p>
+
+    <div class="search-array" id="searchArray"></div>
+
+    <div class="buttons">
+      <input id="target" type="number" placeholder="Target">
+      <button onclick="binarySearch()">Start Search</button>
+      <button class="secondary" onclick="generateSearchArray()">Reset</button>
+    </div>
+
+    <div id="searchMessage"></div>
+
+  </div>
+
+  <!-- GRAPH -->
+  <div id="graphPanel" class="panel hidden">
+
+    <h2>🕸️ Graph Traversal</h2>
+
+    <p>
+      BFS visits nodes level-by-level. DFS explores as deeply as possible
+      before going back.
+    </p>
+
+    <div class="graph">
+      <div class="graph-area">
+
+        <div></div>
+        <div class="node" id="nodeA">A</div>
+        <div></div>
+
+        <div class="node" id="nodeB">B</div>
+        <div class="node" id="nodeC">C</div>
+        <div class="node" id="nodeD">D</div>
+
+        <div class="node" id="nodeE">E</div>
+        <div class="node" id="nodeF">F</div>
+        <div class="node" id="nodeG">G</div>
+
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button onclick="BFS()">BFS</button>
+      <button onclick="DFS()">DFS</button>
+      <button class="secondary" onclick="resetGraph()">Reset</button>
+    </div>
+
+    <div id="graphMessage"></div>
+
+  </div>
+
+</div>
+
+<footer>
+  DSA Algorithm Visualizer • Built with HTML, CSS & JavaScript
+</footer>
+
+<script>
+
+let array = [];
+
+function generateArray() {
+
+  array = [];
+
+  for(let i = 0; i < 12; i++) {
+    array.push(Math.floor(Math.random() * 90) + 10);
+  }
+
+  drawBars();
+  document.getElementById("comparisons").innerText = 0;
+  document.getElementById("swaps").innerText = 0;
+  document.getElementById("algorithm").innerText = "None";
+  document.getElementById("message").innerText =
+    "Random array generated.";
+}
+
+function drawBars(active1 = -1, active2 = -1, sortedFrom = 100) {
+
+  const bars = document.getElementById("bars");
+  bars.innerHTML = "";
+
+  array.forEach((value, index) => {
+
+    const bar = document.createElement("div");
+
+    bar.className = "bar";
+
+    if(index === active1 || index === active2) {
+      bar.classList.add("active");
+    }
+
+    if(index >= sortedFrom) {
+      bar.classList.add("sorted");
+    }
+
+    bar.style.height = value * 3 + "px";
+    bar.innerText = value;
+
+    bars.appendChild(bar);
+  });
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function bubbleSort() {
+
+  document.getElementById("algorithm").innerText = "Bubble Sort";
+
+  let comparisons = 0;
+  let swaps = 0;
+
+  for(let i = 0; i < array.length; i++) {
+
+    for(let j = 0; j < array.length - i - 1; j++) {
+
+      comparisons++;
+
+      drawBars(j, j + 1, array.length - i);
+
+      document.getElementById("comparisons").innerText = comparisons;
+
+      await sleep(300);
+
+      if(array[j] > array[j + 1]) {
+
+        let temp = array[j];
+        array[j] = array[j + 1];
+        array[j + 1] = temp;
+
+        swaps++;
+
+        document.getElementById("swaps").innerText = swaps;
+      }
+    }
+  }
+
+  drawBars(-1, -1, 0);
+
+  document.getElementById("message").innerText =
+    "✅ Bubble Sort completed!";
+}
+
+async function selectionSort() {
+
+  document.getElementById("algorithm").innerText =
+    "Selection Sort";
+
+  let comparisons = 0;
+  let swaps = 0;
+
+  for(let i = 0; i < array.length; i++) {
+
+    let min = i;
+
+    for(let j = i + 1; j < array.length; j++) {
+
+      comparisons++;
+
+      drawBars(min, j, i);
+
+      document.getElementById("comparisons").innerText =
+        comparisons;
+
+      await sleep(300);
+
+      if(array[j] < array[min]) {
+        min = j;
+      }
+    }
+
+    if(min !== i) {
+
+      let temp = array[i];
+      array[i] = array[min];
+      array[min] = temp;
+
+      swaps++;
+
+      document.getElementById("swaps").innerText =
+        swaps;
+    }
+  }
+
+  drawBars(-1, -1, 0);
+
+  document.getElementById("message").innerText =
+    "✅ Selection Sort completed!";
+}
+
+function showSort() {
+
+  document.getElementById("sortPanel")
+    .classList.remove("hidden");
+
+  document.getElementById("searchPanel")
+    .classList.add("hidden");
+
+  document.getElementById("graphPanel")
+    .classList.add("hidden");
+}
+
+function showSearch() {
+
+  document.getElementById("sortPanel")
+    .classList.add("hidden");
+
+  document.getElementById("searchPanel")
+    .classList.remove("hidden");
+
+  document.getElementById("graphPanel")
+    .classList.add("hidden");
+
+  generateSearchArray();
+}
+
+function showGraph() {
+
+  document.getElementById("sortPanel")
+    .classList.add("hidden");
+
+  document.getElementById("searchPanel")
+    .classList.add("hidden");
+
+  document.getElementById("graphPanel")
+    .classList.remove("hidden");
+}
+
+let searchArray = [];
+
+function generateSearchArray() {
+
+  searchArray = [10,20,30,40,50,60,70,80,90];
+
+  drawSearchArray();
+
+  document.getElementById("searchMessage").innerText =
+    "Enter a number and start Binary Search.";
+}
+
+function drawSearchArray(active = -1, found = -1) {
+
+  const box = document.getElementById("searchArray");
+
+  box.innerHTML = "";
+
+  searchArray.forEach((value,index) => {
+
+    const item = document.createElement("div");
+
+    item.className = "search-item";
+
+    if(index === active) {
+      item.classList.add("active");
+    }
+
+    if(index === found) {
+      item.classList.add("found");
+    }
+
+    item.innerText = value;
+
+    box.appendChild(item);
+  });
+}
+
+async function binarySearch() {
+
+  const target =
+    Number(document.getElementById("target").value);
+
+  if(!target) {
+    document.getElementById("searchMessage").innerText =
+      "Please enter a number.";
+    return;
+  }
+
+  let left = 0;
+  let right = searchArray.length - 1;
+
+  while(left <= right) {
+
+    let mid = Math.floor((left + right) / 2);
+
+    drawSearchArray(mid);
+
+    await sleep(800);
+
+    if(searchArray[mid] === target) {
+
+      drawSearchArray(-1, mid);
+
+      document.getElementById("searchMessage").innerText =
+        "✅ Target found at position " + mid;
+
+      return;
+    }
+
+    if(searchArray[mid] < target) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+
+  document.getElementById("searchMessage").innerText =
+    "❌ Target not found.";
+}
+
+const graph = {
+
+  A: ["B","C"],
+  B: ["A","D","E"],
+  C: ["A","F"],
+  D: ["B","G"],
+  E: ["B","F"],
+  F: ["C","E","G"],
+  G: ["D","F"]
+
+};
+
+function resetGraph() {
+
+  Object.keys(graph).forEach(node => {
+
+    document.getElementById("node" + node)
+      .classList.remove("visited");
+
+  });
+
+  document.getElementById("graphMessage").innerText =
+    "Graph reset.";
+}
+
+async function BFS() {
+
+  resetGraph();
+
+  let queue = ["A"];
+  let visited = new Set();
+
+  while(queue.length > 0) {
+
+    let current = queue.shift();
+
+    if(visited.has(current)) continue;
+
+    visited.add(current);
+
+    document.getElementById("node" + current)
+      .classList.add("visited");
+
+    document.getElementById("graphMessage").innerText =
+      "BFS visiting: " + current;
+
+    await sleep(700);
+
+    graph[current].forEach(neighbor => {
+
+      if(!visited.has(neighbor)) {
+        queue.push(neighbor);
+      }
+
+    });
+  }
+
+  document.getElementById("graphMessage").innerText =
+    "✅ BFS completed!";
+}
+
+async function DFS() {
+
+  resetGraph();
+
+  let visited = new Set();
+
+  async function visit(node) {
+
+    if(visited.has(node)) return;
+
+    visited.add(node);
+
+    document.getElementById("node" + node)
+      .classList.add("visited");
+
+    document.getElementById("graphMessage").innerText =
+      "DFS visiting: " + node;
+
+    await sleep(700);
+
+    for(const neighbor of graph[node]) {
+      await visit(neighbor);
+    }
+  }
+
+  await visit("A");
+
+  document.getElementById("graphMessage").innerText =
+    "✅ DFS completed!";
+}
+
+generateArray();
+
+</script>
+
+</body>
+</html>
